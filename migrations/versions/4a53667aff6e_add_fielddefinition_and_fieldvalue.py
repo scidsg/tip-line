@@ -72,7 +72,7 @@ def upgrade() -> None:
                 )
                 VALUES
                     ({username_id}, 'Contact Method', 'TEXT', false, true, true, '[]', 0),
-                    ({username_id}, 'Message', 'MULTILINE_TEXT', true, true, false, '[]', 1)
+                    ({username_id}, 'Message', 'MULTILINE_TEXT', true, true, true, '[]', 1)
                 RETURNING id
                 """
             )
