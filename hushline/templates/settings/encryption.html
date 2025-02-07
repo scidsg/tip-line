@@ -1,0 +1,57 @@
+{% extends "settings/base.html" %}
+
+{% block settings_content %}
+  <h3>Encryption</h3>
+
+  <h4>Proton Key Import</h4>
+  <p>🔒 Do you use Proton Mail? We can automatically retrieve your PGP key from Proton's key server.</p>
+  <form
+    method="POST"
+    action="{{ url_for('settings.update_pgp_key_proton') }}"
+    class="formBody"
+  >
+    {{ pgp_proton_form.hidden_tag() }}
+    <div class="search-box">
+      <label id="searchIcon" for="proton_email">
+        <img
+          class="searchIcon"
+          src="/static/img/app/icon-search.png"
+          alt=""
+        />
+      </label>
+      <input
+        id="searchInput"
+        type="email"
+        name="email"
+        id="proton_email"
+        placeholder="Search Proton email..."
+        required
+      />
+    </div>
+    <button type="submit">Search Proton</button>
+  </form>
+  <form
+    method="POST"
+    class="formBody"
+  >
+    {{ pgp_key_form.hidden_tag() }}
+    {{ pgp_key_form.pgp_key.label }}
+    {{ pgp_key_form.pgp_key }}
+    {% for error in pgp_key_form.pgp_key.errors %}
+      <span class="error">{{ error }}</span>
+    {% endfor %}
+    {{ pgp_key_form.submit }}
+  </form>
+  {% if not user.pgp_key %}
+    <p>
+      🤔 Need help?
+      <a
+        href="https://hushline.app/start-here.html"
+        rel="noopener noreferrer"
+        target="_blank"
+        aria-label="Need help setting up message encryption? Start with our docs."
+        >Start with our docs.</a
+      >
+    </p>
+  {% endif %}
+{% endblock %}

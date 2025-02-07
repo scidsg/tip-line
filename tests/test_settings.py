@@ -175,7 +175,7 @@ def test_add_pgp_key(client: FlaskClient, user: User, user_password: str) -> Non
         new_pgp_key = file.read().strip()
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.encryption"),
         data=form_to_data(PGPKeyForm(data={"pgp_key": new_pgp_key})),
         follow_redirects=True,
     )
@@ -193,7 +193,7 @@ def test_add_invalid_pgp_key(client: FlaskClient, user: User) -> None:
     invalid_pgp_key = "NOT A VALID PGP KEY BLOCK"
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.encryption"),
         data=form_to_data(PGPKeyForm(data={"pgp_key": invalid_pgp_key})),
         follow_redirects=True,
     )
@@ -213,10 +213,9 @@ def test_update_smtp_settings_no_pgp(SMTP: MagicMock, client: FlaskClient, user:
     db.session.commit()
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.notifications"),
         # for some reason using the Form class doesn't work here. why? fuck if i know.
         data={
-            "forwarding_enabled": True,
             "email_address": "primary@example.com",
             "custom_smtp_settings": True,
             "smtp_settings-smtp_server": "smtp.example.com",
@@ -249,7 +248,6 @@ def test_update_smtp_settings_no_pgp(SMTP: MagicMock, client: FlaskClient, user:
 @patch("hushline.email.smtplib.SMTP")
 def test_update_smtp_settings_starttls(SMTP: MagicMock, client: FlaskClient, user: User) -> None:
     new_smtp_settings = {
-        "forwarding_enabled": True,
         "email_address": "primary@example.com",
         "custom_smtp_settings": True,
         "smtp_settings-smtp_server": "smtp.example.com",
@@ -262,7 +260,7 @@ def test_update_smtp_settings_starttls(SMTP: MagicMock, client: FlaskClient, use
     }
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.notifications"),
         data=new_smtp_settings,
         follow_redirects=True,
     )
@@ -294,7 +292,6 @@ def test_update_smtp_settings_starttls(SMTP: MagicMock, client: FlaskClient, use
 @patch("hushline.email.smtplib.SMTP_SSL")
 def test_update_smtp_settings_ssl(SMTP: MagicMock, client: FlaskClient, user: User) -> None:
     new_smtp_settings = {
-        "forwarding_enabled": True,
         "email_address": "primary@example.com",
         "custom_smtp_settings": True,
         "smtp_settings-smtp_server": "smtp.example.com",
@@ -307,7 +304,7 @@ def test_update_smtp_settings_ssl(SMTP: MagicMock, client: FlaskClient, user: Us
     }
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.notifications"),
         data=new_smtp_settings,
         follow_redirects=True,
     )
@@ -341,14 +338,13 @@ def test_update_smtp_settings_default_forwarding(
     SMTP: MagicMock, client: FlaskClient, user: User
 ) -> None:
     new_smtp_settings = {
-        "forwarding_enabled": True,
         "email_address": "primary@example.com",
         "smtp_settings-smtp_encryption": "StartTLS",
         EmailForwardingForm.submit.name: "",
     }
 
     response = client.post(
-        url_for("settings.email"),
+        url_for("settings.notifications"),
         data=new_smtp_settings,
         follow_redirects=True,
     )

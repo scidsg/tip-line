@@ -294,7 +294,6 @@ def make_message(user: User) -> Message:
         msg,
         str(uuid4()),
         False,
-        False,
     )
     db.session.add(field_value)
     db.session.commit()

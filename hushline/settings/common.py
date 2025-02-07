@@ -19,12 +19,10 @@ from wtforms import Field
 
 from hushline.crypto import is_valid_pgp_key
 from hushline.db import db
-from hushline.email import create_smtp_config
 from hushline.model import (
     FieldDefinition,
     FieldType,
     FieldValue,
-    SMTPEncryption,
     User,
     Username,
 )
@@ -33,7 +31,6 @@ from hushline.settings.forms import (
     ChangeUsernameForm,
     DirectoryVisibilityForm,
     DisplayNameForm,
-    EmailForwardingForm,
     FieldChoiceForm,
     FieldForm,
     NewAliasForm,
@@ -237,66 +234,10 @@ def handle_pgp_key_form(user: User, form: PGPKeyForm) -> Response:
         db.session.commit()
     else:
         flash("⛔️ Invalid PGP key format or import failed.")
-        return redirect(url_for(".email"))
+        return redirect(url_for(".encryption"))
 
     flash("👍 PGP key updated successfully.")
-    return redirect(url_for(".email"))
-
-
-def handle_email_forwarding_form(
-    user: User, form: EmailForwardingForm, default_forwarding_enabled: bool
-) -> Optional[Response]:
-    if form.email_address.data and not user.pgp_key:
-        flash("⛔️ Email forwarding requires a configured PGP key")
-        return None
-
-    forwarding_enabled = form.forwarding_enabled.data
-    custom_smtp_settings = forwarding_enabled and (
-        form.custom_smtp_settings.data or not default_forwarding_enabled
-    )
-
-    if custom_smtp_settings:
-        try:
-            smtp_config = create_smtp_config(
-                form.smtp_settings.smtp_username.data,
-                form.smtp_settings.smtp_server.data,
-                form.smtp_settings.smtp_port.data,
-                form.smtp_settings.smtp_password.data or user.smtp_password or "",
-                form.smtp_settings.smtp_sender.data,
-                encryption=SMTPEncryption[form.smtp_settings.smtp_encryption.data],
-            )
-            with smtp_config.smtp_login():
-                pass
-        except Exception as e:
-            current_app.logger.debug(e)
-            flash("⛔️ Unable to validate SMTP connection settings")
-            return None
-
-    user.email = form.email_address.data if forwarding_enabled else None
-    user.smtp_server = form.smtp_settings.smtp_server.data if custom_smtp_settings else None
-    user.smtp_port = form.smtp_settings.smtp_port.data if custom_smtp_settings else None
-    user.smtp_username = form.smtp_settings.smtp_username.data if custom_smtp_settings else None
-
-    # Since passwords aren't pre-populated in the form, don't unset it if not provided
-    user.smtp_password = (
-        form.smtp_settings.smtp_password.data
-        if custom_smtp_settings and form.smtp_settings.smtp_password.data
-        else user.smtp_password
-    )
-    user.smtp_sender = (
-        form.smtp_settings.smtp_sender.data
-        if custom_smtp_settings and form.smtp_settings.smtp_sender.data
-        else None
-    )
-    user.smtp_encryption = (
-        form.smtp_settings.smtp_encryption.data
-        if custom_smtp_settings
-        else SMTPEncryption.default()
-    )
-
-    db.session.commit()
-    flash("👍 SMTP settings updated successfully")
-    return redirect_to_self()
+    return redirect(url_for(".encryption"))
 
 
 def create_profile_forms(

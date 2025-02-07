@@ -22,7 +22,7 @@ class SMTPConfig:
         return all([self.username, self.server, self.port, self.password, self.sender])
 
     @contextmanager
-    def smtp_login(self, *, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
+    def smtp_login(self, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
         raise NotImplementedError
 
 
@@ -40,7 +40,7 @@ def create_smtp_config(  # noqa PLR0913
 
 class SSL_SMTPConfig(SMTPConfig):
     @contextmanager
-    def smtp_login(self, *, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
+    def smtp_login(self, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
         with smtplib.SMTP_SSL(self.server, self.port, timeout=timeout) as server:
             server.login(self.username, self.password)
             yield server
@@ -48,7 +48,7 @@ class SSL_SMTPConfig(SMTPConfig):
 
 class StartTLS_SMTPConfig(SMTPConfig):
     @contextmanager
-    def smtp_login(self, *, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
+    def smtp_login(self, timeout: int = 1) -> Generator[smtplib.SMTP, None, None]:
         with smtplib.SMTP(self.server, self.port, timeout=timeout) as server:
             server.starttls()
             server.login(self.username, self.password)

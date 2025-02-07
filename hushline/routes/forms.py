@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
 from wtforms import (
-    HiddenField,
     PasswordField,
     RadioField,
     SelectField,
@@ -63,13 +62,6 @@ class DynamicMessageForm:
 
         self.F = F
 
-        # Add email body hidden field
-        setattr(
-            self.F,
-            "email_body",
-            HiddenField("Email Body", validators=[Optional(), Length(max=10240 * len(fields))]),
-        )
-
         # Custom validator to skip choice validation while keeping other validations
         def skip_invalid_choice(
             form: FlaskForm, field: RadioField | SelectField | MultiCheckboxField
@@ -109,7 +101,13 @@ class DynamicMessageForm:
             # Add the field to the form
             name = f"field_{i}"
             if field.field_type == FieldType.TEXT:
-                setattr(self.F, name, StringField(field.label, validators=validators))
+                setattr(
+                    self.F,
+                    name,
+                    StringField(
+                        field.label, validators=validators, render_kw={"autocomplete": "off"}
+                    ),
+                )
             elif field.field_type == FieldType.MULTILINE_TEXT:
                 setattr(self.F, name, TextAreaField(field.label, validators=validators))
             elif field.field_type == FieldType.CHOICE_SINGLE:

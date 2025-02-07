@@ -20,7 +20,6 @@ def test_delete_own_message(client: FlaskClient, user: User) -> None:
             message,
             "test_value",
             field_def.encrypted,
-            False,
         )
         db.session.add(field_value)
         db.session.commit()
@@ -59,7 +58,6 @@ def test_cannot_delete_other_user_message(
             other_user_message,
             "test_value",
             field_def.encrypted,
-            False,
         )
         db.session.add(field_value)
         db.session.commit()

@@ -39,7 +39,7 @@ def register_proton_routes(bp: Blueprint) -> None:
         except requests.exceptions.RequestException as e:
             current_app.logger.error(f"Error fetching PGP key from Proton Mail: {e}")
             flash("⛔️ Error fetching PGP key from Proton Mail.")
-            return redirect(url_for(".email"))
+            return redirect(url_for(".notifications"))
 
         if resp.status_code == 200:  # noqa: PLR2004
             pgp_key = resp.text
@@ -48,10 +48,10 @@ def register_proton_routes(bp: Blueprint) -> None:
                 db.session.commit()
             else:
                 flash("⛔️ No PGP key found for the email address.")
-                return redirect(url_for(".email"))
+                return redirect(url_for(".notifications"))
         else:
             flash("⛔️ This isn't a Proton Mail email address.")
-            return redirect(url_for(".email"))
+            return redirect(url_for(".notifications"))
 
         flash("👍 PGP key updated successfully.")
-        return redirect(url_for(".email"))
+        return redirect(url_for(".notifications"))

@@ -3164,3 +3164,28 @@ li label {
   border: none;
   padding: 0;
 }
+
+.display-none {
+  display: none;
+}
+
+.tab-content form.auto-submit {
+  margin-bottom: 1.5rem;
+}
+
+.tab-content form.auto-submit:first-of-type {
+  margin-bottom: 0rem;
+}
+
+.toggle-label {
+  margin-bottom: 0;
+}
+
+#email_address ~ .toggle-ui {
+  margin-bottom: 1.5rem;
+}
+
+#email_address + .meta {
+  margin-top: 0.5rem;
+  margin-bottom: 1.25rem;
+}

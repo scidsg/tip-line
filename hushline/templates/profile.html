@@ -9,6 +9,13 @@
 {% endblock %}
 
 {% block content %}
+  <div id="userEmailSettings" class="display-none">
+    {{ {
+        "sendEmail": user.enable_email_notifications,
+        "includeContents": user.email_include_message_content,
+       } | tojson }}
+  </div>
+
   <h2 class="submit">
     {% if user.pgp_key %}
       {# Unauthenticated or other users who meet PGP requirements #}
@@ -89,9 +96,7 @@
     action="{{ url_for('submit_message', username=username.username) }}"
     id="messageForm"
   >
-    {% if user.pgp_key %}
-      {{ form.hidden_tag() }}
-    {% endif %}
+    {{ form.hidden_tag() }}
     
     {% for data in field_data %}
       {% if data['field'].enabled %}
@@ -126,12 +131,6 @@
     {% endfor %}
 
     <input type="hidden" id="publicKey" value="{{ user.pgp_key }}" />
-    <input
-      type="hidden"
-      name="client_side_encrypted"
-      id="clientSideEncrypted"
-      value="false"
-    />
 
     {% if user.pgp_key %}
       <div class="captcha">

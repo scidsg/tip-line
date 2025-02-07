@@ -58,28 +58,30 @@ def get_ip_address() -> str:
     return ip_address
 
 
-def do_send_email(user: User, content_to_save: str) -> None:
-    if user.email and content_to_save:
-        try:
-            if user.smtp_server:
-                smtp_config = create_smtp_config(
-                    user.smtp_username,  # type: ignore[arg-type]
-                    user.smtp_server,  # type: ignore[arg-type]
-                    user.smtp_port,  # type: ignore[arg-type]
-                    user.smtp_password,  # type: ignore[arg-type]
-                    user.smtp_sender,  # type: ignore[arg-type]
-                    encryption=user.smtp_encryption,
-                )
-            else:
-                smtp_config = create_smtp_config(
-                    current_app.config["SMTP_USERNAME"],
-                    current_app.config["SMTP_SERVER"],
-                    current_app.config["SMTP_PORT"],
-                    current_app.config["SMTP_PASSWORD"],
-                    current_app.config["NOTIFICATIONS_ADDRESS"],
-                    encryption=SMTPEncryption[current_app.config["SMTP_ENCRYPTION"]],
-                )
+def do_send_email(user: User, body: str) -> None:
+    if not user.email or not user.enable_email_notifications:
+        return
 
-            send_email(user.email, "New Message", content_to_save, smtp_config)
-        except Exception as e:
-            current_app.logger.error(f"Error sending email: {str(e)}", exc_info=True)
+    try:
+        if user.smtp_server:
+            smtp_config = create_smtp_config(
+                user.smtp_username,  # type: ignore[arg-type]
+                user.smtp_server,  # type: ignore[arg-type]
+                user.smtp_port,  # type: ignore[arg-type]
+                user.smtp_password,  # type: ignore[arg-type]
+                user.smtp_sender,  # type: ignore[arg-type]
+                encryption=user.smtp_encryption,
+            )
+        else:
+            smtp_config = create_smtp_config(
+                current_app.config["SMTP_USERNAME"],
+                current_app.config["SMTP_SERVER"],
+                current_app.config["SMTP_PORT"],
+                current_app.config["SMTP_PASSWORD"],
+                current_app.config["NOTIFICATIONS_ADDRESS"],
+                encryption=SMTPEncryption[current_app.config["SMTP_ENCRYPTION"]],
+            )
+
+        send_email(user.email, "New Hush Line Message Received", body, smtp_config)
+    except Exception as e:
+        current_app.logger.error(f"Error sending email: {str(e)}", exc_info=True)

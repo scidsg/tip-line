@@ -44,61 +44,38 @@ async function encryptMessage(publicKeyArmored, message) {
   }
 }
 
+function getFieldValue(field) {
+  if (
+    field.tagName === "INPUT" ||
+    field.tagName === "SELECT" ||
+    field.tagName === "TEXTAREA"
+  ) {
+    return field.value;
+  } else if (field.tagName === "UL") {
+    const checkedValues = [];
+    field
+      .querySelectorAll(
+        "input[type='checkbox']:checked, input[type='radio']:checked",
+      )
+      .forEach((input) => {
+        checkedValues.push(input.value);
+      });
+    return checkedValues.join(", ");
+  }
+}
+
+function getFieldLabel(field) {
+  return field.getAttribute("data-label");
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("messageForm");
-  const encryptedFlag = document.getElementById("clientSideEncrypted");
   const publicKeyArmored = document.getElementById("publicKey")
     ? document.getElementById("publicKey").value
     : "";
 
-  let encryptionSuccessful = true;
-
-  function getFieldValue(field) {
-    if (
-      field.tagName === "INPUT" ||
-      field.tagName === "SELECT" ||
-      field.tagName === "TEXTAREA"
-    ) {
-      return field.value;
-    } else if (field.tagName === "UL") {
-      const checkedValues = [];
-      field
-        .querySelectorAll(
-          "input[type='checkbox']:checked, input[type='radio']:checked",
-        )
-        .forEach((input) => {
-          checkedValues.push(input.value);
-        });
-      return checkedValues.join(", ");
-    }
-  }
-
-  function getFieldLabel(field) {
-    return field.getAttribute("data-label");
-  }
-
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
-
-    // Build an email body with all fields
-    let emailBody = "";
-    document.querySelectorAll(".form-field").forEach(async (field) => {
-      const value = getFieldValue(field);
-      const label = getFieldLabel(field);
-
-      emailBody += `# ${label}\n\n${value}\n\n====================\n\n`;
-    });
-    const encryptedEmailBody = await encryptMessage(
-      publicKeyArmored,
-      emailBody,
-    );
-    if (encryptedEmailBody) {
-      const emailBodyEl = document.getElementById("email_body");
-      emailBodyEl.value = encryptedEmailBody;
-    } else {
-      encryptionSuccessful = false;
-      console.error("Client-side encryption failed for email body");
-    }
 
     // Loop through all encrypted fields and encrypt them
     document.querySelectorAll(".encrypted-field").forEach(async (field) => {
@@ -136,14 +113,9 @@ document.addEventListener("DOMContentLoaded", function () {
         fieldContainer.appendChild(hiddenInput);
         fieldContainer.appendChild(textarea);
       } else {
-        encryptionSuccessful = false;
         console.error("Client-side encryption failed for field:", field.name);
       }
     });
-
-    if (encryptionSuccessful) {
-      encryptedFlag.value = "true";
-    }
 
     // Wait for the DOM to update before submitting
     setTimeout(() => {

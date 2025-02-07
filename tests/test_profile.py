@@ -66,7 +66,6 @@ def test_profile_submit_message(client: FlaskClient, user: User) -> None:
         data={
             "field_0": msg_contact_method,
             "field_1": msg_content,
-            "client_side_encrypted": "false",
             "captcha_answer": get_captcha_from_session(client, user.primary_username.username),
         },
         follow_redirects=True,
@@ -96,7 +95,6 @@ def test_profile_submit_message_to_alias(
         data={
             "field_0": msg_contact_method,
             "field_1": msg_content,
-            "client_side_encrypted": "false",
             "captcha_answer": get_captcha_from_session(client, user.primary_username.username),
         },
         follow_redirects=True,

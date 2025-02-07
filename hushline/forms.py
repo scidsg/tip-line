@@ -13,8 +13,6 @@ from hushline.safe_template import TemplateError, safe_render_template
 
 
 class Button:
-    html_params = staticmethod(html_params)
-
     def __call__(self, field: Field, **kwargs: Any) -> Markup:
         kwargs.setdefault("id", field.id)
         kwargs.setdefault("type", "submit")
@@ -23,8 +21,17 @@ class Button:
             kwargs["value"] = field._value()
         if "required" not in kwargs and "required" in getattr(field, "flags", []):
             kwargs["required"] = True
-        params = self.html_params(name=field.name, **kwargs)
+        params = html_params(name=field.name, **kwargs)
         return Markup(f"<button {params}>{kwargs['value']}</button>")
+
+
+class DisplayNoneButton(Button):
+    def __call__(self, field: Field, **kwargs: Any) -> Markup:
+        kwargs.setdefault("class", "")
+        if kwargs["class"]:
+            kwargs["class"] += " "
+        kwargs["class"] += "display-none"
+        return super().__call__(field, **kwargs)
 
 
 class ComplexPassword:

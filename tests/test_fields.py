@@ -113,7 +113,6 @@ def test_field_value_encryption(user: User) -> None:
         message=message,
         value="this is a test value",
         encrypted=field_definition.encrypted,
-        client_side_encrypted=False,
     )
     db.session.add(field_value)
     db.session.commit()
@@ -150,7 +149,6 @@ def test_field_value_unencryption(user: User) -> None:
         message=message,
         value="this is a test value",
         encrypted=field_definition.encrypted,
-        client_side_encrypted=False,
     )
     db.session.add(field_value)
     db.session.commit()

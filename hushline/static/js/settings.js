@@ -1,15 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
   const tabs = document.querySelectorAll(".tab");
-  const bioCountEl = document.querySelector(".bio-count");
-  const mainElement = document.querySelector("main");
   const tabList = document.querySelectorAll(".tab-list .tab");
+  const mainElement = document.querySelector("main");
 
-  // Apply "settings-main" class if there are 5 or more tabs
   if (tabList.length >= 5) {
     mainElement.classList.add("settings-main");
   }
+});
 
-  // Deletion account confirmation logic
+document.addEventListener("DOMContentLoaded", function () {
+  const bioCountEl = document.querySelector(".bio-count");
+  document.getElementById("bio")?.addEventListener("keyup", function (e) {
+    bioCountEl.textContent = e.target.value.length;
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("deleteAccountButton")
     ?.addEventListener("click", function (event) {
@@ -20,7 +26,9 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
       }
     });
+});
 
+document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelector("input[name='show_in_directory']")
     ?.addEventListener("change", function (e) {
@@ -31,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
           .click();
       }, 200);
     });
+});
 
+document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelector("input[name='show_user_guidance']")
     ?.addEventListener("change", function (e) {
@@ -40,11 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("button[name='update_user_guidance']").click();
       }, 200);
     });
+});
 
-  document.getElementById("bio")?.addEventListener("keyup", function (e) {
-    bioCountEl.textContent = e.target.value.length;
-  });
-
+document.addEventListener("DOMContentLoaded", function () {
   const colorPicker = document.getElementById("brand-primary-color");
   if (colorPicker) {
     for (const eventName of ["input", "change"]) {
@@ -54,14 +62,18 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
+});
 
+document.addEventListener("DOMContentLoaded", function () {
   const appNameBox = document.getElementById("brand-app-name");
   if (appNameBox) {
     appNameBox.addEventListener("input", function (event) {
       document.querySelector("h1").innerText = event.target.value;
     });
   }
+});
 
+document.addEventListener("DOMContentLoaded", function () {
   var forwarding_enabled = document.querySelector(
     "input[id='forwarding_enabled']",
   )?.checked;
@@ -102,8 +114,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ).hidden = !e.target.checked;
       }, 200);
     });
+});
 
-  // Reset guidance
+document.addEventListener("DOMContentLoaded", function () {
   const resetGuidanceButton = document.querySelector(".reset-guidance-button");
   if (resetGuidanceButton) {
     resetGuidanceButton.addEventListener("click", function (event) {
@@ -111,4 +124,17 @@ document.addEventListener("DOMContentLoaded", function () {
       location.reload();
     });
   }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("form.auto-submit").forEach((elem) => {
+    const input = elem.querySelector(':scope input[type="checkbox"');
+    elem
+      .querySelector(":scope .toggle")
+      .addEventListener("click", function (event) {
+        event.preventDefault();
+        input.checked ^= 1;
+        elem.querySelector(':scope button[type="submit"]').click();
+      });
+  });
 });
