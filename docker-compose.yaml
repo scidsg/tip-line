@@ -16,6 +16,7 @@ services:
       SQLALCHEMY_DATABASE_URI: postgresql://hushline:hushline@postgres:5432/hushline
       REGISTRATION_CODES_REQUIRED: 'false'
       ALIAS_MODE: always
+      FIELDS_MODE: always
       SESSION_COOKIE_NAME: session
       NOTIFICATIONS_ADDRESS: notifications@hushline.app
       DIRECTORY_VERIFIED_TAB_ENABLED: "${DIRECTORY_VERIFIED_TAB_ENABLED:-true}"

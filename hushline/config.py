@@ -31,6 +31,19 @@ class AliasMode(Enum):
         raise ConfigParseError(f"Not a valid value for {cls.__name__}: {string!r}")
 
 
+@unique
+class FieldsMode(Enum):
+    ALWAYS = "always"
+    PREMIUM = "premium"
+
+    @classmethod
+    def parse(cls, string: str) -> Self:
+        for var in cls:
+            if var.value == string:
+                return var
+        raise ConfigParseError(f"Not a valid value for {cls.__name__}: {string!r}")
+
+
 def load_config(env: Optional[Mapping[str, str]] = None) -> Mapping[str, Any]:
     if env is None:
         env = os.environ
@@ -132,6 +145,11 @@ def _load_hushline_misc(env: Mapping[str, str]) -> Mapping[str, Any]:
         data["ALIAS_MODE"] = AliasMode.parse(alias_str)
     else:
         data["ALIAS_MODE"] = AliasMode.ALWAYS
+
+    if fields_str := env.get("FIELDS_MODE"):
+        data["FIELDS_MODE"] = FieldsMode.parse(fields_str)
+    else:
+        data["FIELDS_MODE"] = FieldsMode.ALWAYS
 
     return data
 

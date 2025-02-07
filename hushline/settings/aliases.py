@@ -2,6 +2,7 @@ from typing import Tuple
 
 from flask import (
     Blueprint,
+    abort,
     flash,
     redirect,
     render_template,
@@ -105,6 +106,9 @@ def register_aliases_routes(bp: Blueprint) -> None:
         if not alias:
             flash("Alias not found.")
             return redirect(url_for(".index"))
+
+        if not alias.user.fields_enabled:
+            return abort(401)
 
         alias.create_default_field_defs()
 

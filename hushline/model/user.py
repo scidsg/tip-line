@@ -5,7 +5,7 @@ from passlib.hash import scrypt
 from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from hushline.config import AliasMode
+from hushline.config import AliasMode, FieldsMode
 from hushline.crypto import decrypt_field, encrypt_field
 from hushline.db import db
 from hushline.model.enums import SMTPEncryption, StripeSubscriptionStatusEnum
@@ -178,6 +178,15 @@ class User(Model):
             raise Exception(err_msg)
         current_app.logger.warning(err_msg)
         return self._PREMIUM_ALIAS_COUNT
+
+    @property
+    def fields_enabled(self) -> bool:
+        fields_mode = current_app.config["FIELDS_MODE"]
+
+        if fields_mode == FieldsMode.ALWAYS:
+            return True
+
+        return not self.is_free_tier
 
     def __init__(self, **kwargs: Any) -> None:
         for key in ["password_hash", "_password_hash"]:

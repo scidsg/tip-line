@@ -2,6 +2,7 @@ from typing import Tuple
 
 from flask import (
     Blueprint,
+    abort,
     redirect,
     render_template,
     request,
@@ -72,6 +73,10 @@ def register_profile_routes(bp: Blueprint) -> None:
     @authentication_required
     def profile_fields() -> Response | Tuple[str, int]:
         user = db.session.scalars(db.select(User).filter_by(id=session["user_id"])).one()
+
+        if not user.fields_enabled:
+            return abort(401)
+
         username = user.primary_username
 
         if username is None:

@@ -121,6 +121,7 @@ def configure_jinja(app: Flask) -> None:
 
         data.update(
             alias_mode=app.config["ALIAS_MODE"],
+            fields_mode=app.config["FIELDS_MODE"],
             directory_verified_tab_enabled=app.config["DIRECTORY_VERIFIED_TAB_ENABLED"],
             is_onion_service=request.host.lower().endswith(".onion"),
             is_premium_enabled=bool(app.config.get("STRIPE_SECRET_KEY", False)),

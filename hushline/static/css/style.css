@@ -3150,7 +3150,7 @@ label > .meta {
 }
 
 form li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -3163,4 +3163,16 @@ li label {
 .message pre {
   border: none;
   padding: 0;
+}
+
+.drill-in h4 {
+  margin-top: 0;
+}
+
+form:last-of-type + .fields {
+  margin-top: 2rem;
+}
+
+.formBody ul {
+  padding-left: 0;
 }
